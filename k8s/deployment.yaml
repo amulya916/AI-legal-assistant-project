@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ailegalproject-deployment
+  labels:
+    app: ailegalproject
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ailegalproject
+  template:
+    metadata:
+      labels:
+        app: ailegalproject
+    spec:
+      containers:
+        - name: ailegalproject-container
+          image: your-dockerhub-username/ailegalproject:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          env:
+            - name: FLASK_ENV
+              value: "production"
+            - name: PORT
+              value: "5000"
+            - name: DATABASE_PATH
+              value: "/app/data/database.db"
+            - name: UPLOAD_FOLDER
+              value: "/app/uploads"
+            - name: FLASK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ailegalproject-secrets
+                  key: flask-secret-key
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ailegalproject-secrets
+                  key: gemini-api-key
+          volumeMounts:
+            - name: db-storage
+              mountPath: /app/data
+            - name: uploads-storage
+              mountPath: /app/uploads
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: ailegalproject-db-pvc
+        - name: uploads-storage
+          persistentVolumeClaim:
+            claimName: ailegalproject-uploads-pvc

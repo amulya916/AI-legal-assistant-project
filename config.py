@@ -12,13 +12,13 @@ class Config:
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
     
     # SQLite Database Path
-    DATABASE_PATH = os.path.join(BASE_DIR, 'database.db')
+    DATABASE_PATH = os.environ.get('DATABASE_PATH', os.path.join(BASE_DIR, 'database.db'))
     
     # Google Gemini API Key
     GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
     
     # Document upload configurations
-    UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', os.path.join(BASE_DIR, 'uploads'))
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 Megabytes max
     ALLOWED_EXTENSIONS = {'pdf', 'docx'}
     
