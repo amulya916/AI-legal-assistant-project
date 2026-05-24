@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - AdvoSphere Legal Assistant{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="dashboard-grid">
+        <!-- Sidebar Navigation Shortcuts -->
+        <aside class="contact-info-card" style="gap:15px; padding:20px; height:fit-content;">
+            <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:10px; color:var(--text-muted);">Quick Panel</h3>
+            <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline" style="justify-content:flex-start; width:100%; border-color:var(--primary); background-color:var(--primary-light); color:var(--primary);">
+                <i class="fa-solid fa-gauge"></i> Overview
+            </a>
+            <a href="{{ url_for('chat.index') }}" class="btn btn-outline" style="justify-content:flex-start; width:100%;">
+                <i class="fa-solid fa-comments"></i> AI Legal Chat
+            </a>
+            <a href="{{ url_for('features.rights_finder') }}" class="btn btn-outline" style="justify-content:flex-start; width:100%;">
+                <i class="fa-solid fa-magnifying-glass-law"></i> Rights Finder
+            </a>
+            <a href="{{ url_for('features.notice_generator') }}" class="btn btn-outline" style="justify-content:flex-start; width:100%;">
+                <i class="fa-solid fa-file-signature"></i> Notice Builder
+            </a>
+            <a href="{{ url_for('features.document_analyzer') }}" class="btn btn-outline" style="justify-content:flex-start; width:100%;">
+                <i class="fa-solid fa-file-shield"></i> Doc Auditor
+            </a>
+            <a href="{{ url_for('features.rti_assistant') }}" class="btn btn-outline" style="justify-content:flex-start; width:100%;">
+                <i class="fa-solid fa-circle-info"></i> RTI Assistant
+            </a>
+            <a href="{{ url_for('dashboard.profile') }}" class="btn btn-outline" style="justify-content:flex-start; width:100%;">
+                <i class="fa-solid fa-gears"></i> Profile Settings
+            </a>
+        </aside>
+
+        <!-- Main Dashboard Console -->
+        <section>
+            <div class="mb-4">
+                <h1 style="font-family:'Outfit'; font-weight:800; font-size:2.2rem; line-height:1.2;">Dashboard Overview</h1>
+                <p style="color:var(--text-secondary);">Hello, <strong>{{ session.get('name') }}</strong>. Monitor your chatbot usage, drafts, and document status.</p>
+            </div>
+
+            <!-- Statistics Counters Grid -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-comment-dots"></i></div>
+                    <div class="stat-details">
+                        <span class="stat-value">{{ chat_count }}</span>
+                        <span class="stat-label">Total Chats</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card accent-stat">
+                    <div class="stat-icon"><i class="fa-solid fa-bookmark"></i></div>
+                    <div class="stat-details">
+                        <span class="stat-value">{{ saved_count }}</span>
+                        <span class="stat-label">Saved Chats</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-file-signature"></i></div>
+                    <div class="stat-details">
+                        <span class="stat-value">{{ notice_count }}</span>
+                        <span class="stat-label">Notices Generated</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card accent-stat">
+                    <div class="stat-icon"><i class="fa-solid fa-file-shield"></i></div>
+                    <div class="stat-details">
+                        <span class="stat-value">{{ document_count }}</span>
+                        <span class="stat-label">Files Audited</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-layout-row">
+                <!-- Left Column (Notices History & Saved Chats) -->
+                <div>
+                    <!-- Notices Draft Box -->
+                    <div class="dashboard-card">
+                        <div class="dashboard-card-header">
+                            <h3 class="dashboard-card-title"><i class="fa-solid fa-file-circle-check"></i> Notice Drafts History</h3>
+                            <a href="{{ url_for('features.notice_generator') }}" class="feature-link" style="font-size:0.85rem;">New Notice</a>
+                        </div>
+                        
+                        {% if recent_notices %}
+                            <ul class="list-group">
+                                {% for n in recent_notices %}
+                                    <li class="list-item">
+                                        <div class="list-item-content">
+                                            <span class="list-item-title">{{ n.notice_type.replace('_', ' ').title() }} Notice</span>
+                                            <span class="list-item-meta">Drafted on {{ n.created_at }}</span>
+                                        </div>
+                                        <div>
+                                            <a href="{{ url_for('features.download_notice', notice_id=n.id) }}" class="btn btn-outline btn-sm" title="Download PDF">
+                                                <i class="fa-solid fa-file-pdf" style="color:var(--danger);"></i> Download PDF
+                                            </a>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <div class="empty-state">
+                                <i class="fa-solid fa-file-invoice"></i>
+                                <p>You have not drafted any notices yet.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Bookmarked Chats -->
+                    <div class="dashboard-card">
+                        <div class="dashboard-card-header">
+                            <h3 class="dashboard-card-title"><i class="fa-solid fa-bookmark"></i> Bookmarked Conversations</h3>
+                            <a href="{{ url_for('chat.index') }}" class="feature-link" style="font-size:0.85rem;">Open Chat</a>
+                        </div>
+                        
+                        {% if saved_chats %}
+                            <ul class="list-group">
+                                {% for c in saved_chats %}
+                                    <li class="list-item">
+                                        <div class="list-item-content" style="max-width: 80%;">
+                                            <span class="list-item-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Q: "{{ c.message }}"</span>
+                                            <span class="list-item-meta">Saved on {{ c.timestamp }}</span>
+                                        </div>
+                                        <div>
+                                            <a href="{{ url_for('chat.index') }}" class="btn btn-outline btn-sm" title="View Chat">
+                                                <i class="fa-solid fa-arrow-right"></i> View
+                                            </a>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <div class="empty-state">
+                                <i class="fa-regular fa-bookmark"></i>
+                                <p>Bookmark responses inside the chatbot to save details here.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Right Column (User Profile Snippet) -->
+                <div>
+                    <div class="dashboard-card" style="height: fit-content;">
+                        <div class="dashboard-card-header">
+                            <h3 class="dashboard-card-title"><i class="fa-solid fa-circle-user"></i> Profile Info</h3>
+                            <a href="{{ url_for('dashboard.profile') }}" class="feature-link" style="font-size:0.85rem;">Edit</a>
+                        </div>
+                        
+                        <div style="display:flex; flex-direction:column; gap:16px; font-size:0.95rem;">
+                            <div>
+                                <span style="font-weight:600; color:var(--text-secondary); display:block; font-size:0.8rem;">FULL NAME</span>
+                                <strong>{{ user.name }}</strong>
+                            </div>
+                            <div>
+                                <span style="font-weight:600; color:var(--text-secondary); display:block; font-size:0.8rem;">EMAIL ADDRESS</span>
+                                <strong>{{ user.email }}</strong>
+                            </div>
+                            <div>
+                                <span style="font-weight:600; color:var(--text-secondary); display:block; font-size:0.8rem;">ACCOUNT ROLE</span>
+                                <span class="role-badge {{ user.role }}">{{ user.role.upper() }}</span>
+                            </div>
+                            <div>
+                                <span style="font-weight:600; color:var(--text-secondary); display:block; font-size:0.8rem;">REGISTERED ON</span>
+                                <strong>{{ user.created_at }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

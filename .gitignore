@@ -1,0 +1,30 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables (contains private keys)
+.env
+
+# Databases
+*.db
+*.sqlite3
+
+# Document uploads folder (contains user uploaded files)
+uploads/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Editor/IDE configurations
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp

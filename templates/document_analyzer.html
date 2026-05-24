@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Document Analyzer - AdvoSphere Legal Assistant{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <div class="container">
+        <h1 class="page-title">Document Auditor</h1>
+        <p style="color:var(--text-secondary);max-width:550px;margin:0 auto;">
+            Upload contracts, agreements, or terms (PDF/DOCX) to generate summaries, isolate obligations, and clarify complicated legalese.
+        </p>
+    </div>
+</header>
+
+<section class="page-content-wrapper">
+    <div class="container">
+        <div class="feature-layout-split">
+            
+            <!-- Left Pane: Upload Document Form -->
+            <div style="height: fit-content; display:flex; flex-direction:column; gap:20px;">
+                <div class="form-card">
+                    <h3 class="mb-3" style="font-weight:700; font-size:1.2rem;">
+                        <i class="fa-solid fa-file-arrow-up" style="color:var(--primary);"></i> Upload Contract
+                    </h3>
+                    
+                    <form action="{{ url_for('features.document_analyzer') }}" method="POST" enctype="multipart/form-data" id="uploadForm">
+                        <div class="upload-zone" id="uploadZone">
+                            <input type="file" name="document" id="fileInput" class="file-input" accept=".pdf,.docx" required>
+                            <div id="uploadText">
+                                <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                                <p class="upload-text">Choose a file or drag it here</p>
+                                <p class="upload-hint">Supported formats: PDF, DOCX (Max 16MB)</p>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary mt-3" style="width:100%;">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Audit Document
+                        </button>
+                    </form>
+                </div>
+
+                <!-- History of uploaded documents -->
+                <div class="dashboard-card" style="height: fit-content;">
+                    <div class="dashboard-card-header" style="margin-bottom: 12px; padding-bottom: 8px;">
+                        <h3 class="dashboard-card-title" style="font-size:1rem;"><i class="fa-solid fa-clock-rotate-left"></i> Audited Documents</h3>
+                    </div>
+                    
+                    {% if uploads_history %}
+                        <ul class="list-group" style="max-height: 250px; overflow-y: auto;">
+                            {% for doc in uploads_history %}
+                                <li class="list-item" style="padding:10px 14px;">
+                                    <div class="list-item-content">
+                                        <span class="list-item-title" style="font-size:0.85rem; word-break:break-all;">{{ doc.file_name }}</span>
+                                        <span class="list-item-meta" style="font-size:0.75rem;">Audited on {{ doc.upload_date }}</span>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="empty-state" style="padding: 20px 10px;">
+                            <p style="font-size:0.85rem;">No files audited yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Right Pane: Analysis Results Panel -->
+            <div id="analysisResultsSection">
+                {% if analysis %}
+                    <div class="analysis-result-card">
+                        <h3 class="analysis-title">
+                            <i class="fa-solid fa-file-shield"></i> Audit Report: {{ filename }}
+                        </h3>
+                        
+                        <div class="analysis-body" id="analysisBody">
+                            <!-- Populated with converted markdown -->
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="analysis-result-card text-center" style="padding: 60px; border: 1.5px dashed var(--border-color); background: transparent;">
+                        <i class="fa-solid fa-file-shield" style="font-size:3.5rem; color:var(--text-muted); margin-bottom:15px;"></i>
+                        <h3>Awaiting Document Upload</h3>
+                        <p style="color:var(--text-secondary); margin-top:10px;">
+                            Select a document file on the left and run the audit engine. AdvoSphere will read the text and produce a clear breakdown of summaries and obligations.
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/analyzer.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Render raw markdown analysis into HTML
+        const analysisRaw = `{{ analysis | safe if analysis else '' }}`;
+        const analysisBody = document.getElementById('analysisBody');
+        
+        if (analysisBody && analysisRaw) {
+            let parsed = analysisRaw;
+            parsed = parsed
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/^### (.*?)$/gm, '<h3>$1</h3>')
+                .replace(/^## (.*?)$/gm, '<h2>$1</h2>')
+                .replace(/^# (.*?)$/gm, '<h1>$1</h1>')
+                .replace(/^\s*[-*]\s+(.*?)$/gm, '<li>$1</li>')
+                .replace(/(<li>.*?<\/li>)+/g, '<ul>$&</ul>')
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>');
+                
+            if (!parsed.startsWith('<h') && !parsed.startsWith('<p') && !parsed.startsWith('<u')) {
+                parsed = '<p>' + parsed + '</p>';
+            }
+            analysisBody.innerHTML = parsed;
+        }
+    });
+</script>
+{% endblock %}

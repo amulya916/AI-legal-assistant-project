@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - AdvoSphere Legal Assistant{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:40px; padding-bottom:60px;">
+    
+    <!-- Admin Header -->
+    <div class="mb-4">
+        <h1 style="font-family:'Outfit'; font-weight:800; font-size:2.2rem; line-height:1.2;">Administration Console</h1>
+        <p style="color:var(--text-secondary);">Manage system users, monitor chatbot analytics, and review system feedback logs.</p>
+    </div>
+
+    <!-- Administrative Statistics Counters -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+            <div class="stat-details">
+                <span class="stat-value">{{ stats.total_users }}</span>
+                <span class="stat-label">Total Users</span>
+            </div>
+        </div>
+        
+        <div class="stat-card accent-stat">
+            <div class="stat-icon"><i class="fa-solid fa-comments"></i></div>
+            <div class="stat-details">
+                <span class="stat-value">{{ stats.total_chats }}</span>
+                <span class="stat-label">Conversations</span>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-file-invoice"></i></div>
+            <div class="stat-details">
+                <span class="stat-value">{{ stats.total_notices }}</span>
+                <span class="stat-label">Notices Saved</span>
+            </div>
+        </div>
+        
+        <div class="stat-card accent-stat">
+            <div class="stat-icon"><i class="fa-solid fa-star" style="color:var(--warning);"></i></div>
+            <div class="stat-details">
+                <span class="stat-value">{{ stats.avg_rating }} / 5</span>
+                <span class="stat-label">Avg Feedback ({{ stats.total_feedback }})</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. Users Management Section -->
+    <div class="dashboard-card mb-4">
+        <div class="dashboard-card-header">
+            <h3 class="dashboard-card-title"><i class="fa-solid fa-user-gear"></i> User Directory & Access Control</h3>
+        </div>
+        
+        <div class="admin-table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>User Name</th>
+                        <th>Email Address</th>
+                        <th>Current Role</th>
+                        <th>Registered Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                        <tr>
+                            <td style="font-weight:700;">{{ u.name }}</td>
+                            <td>{{ u.email }}</td>
+                            <td>
+                                <span class="role-badge {{ u.role }}">{{ u.role.upper() }}</span>
+                            </td>
+                            <td>{{ u.created_at }}</td>
+                            <td>
+                                <!-- Role Toggle Form -->
+                                <form action="{{ url_for('admin.change_role', user_id=u.id) }}" method="POST" style="display:inline-block; margin-right:8px;">
+                                    <input type="hidden" name="role" value="{% if u.role == 'admin' %}user{% else %}admin{% endif %}">
+                                    <button type="submit" class="btn btn-outline btn-sm" {% if u.id == session.get('user_id') %}disabled title="Cannot self-demote"{% endif %}>
+                                        <i class="fa-solid fa-user-shield"></i> Set as {% if u.role == 'admin' %}User{% else %}Admin{% endif %}
+                                    </button>
+                                </form>
+                                
+                                <!-- Delete User Form -->
+                                <form action="{{ url_for('admin.delete_user', user_id=u.id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to permanently delete this user account and all their records?');">
+                                    <button type="submit" class="btn btn-danger btn-sm" {% if u.id == session.get('user_id') %}disabled title="Cannot self-delete"{% endif %}>
+                                        <i class="fa-solid fa-trash-can"></i> Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="dashboard-layout-row">
+        <!-- 2. Chat Usage Analytics -->
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <h3 class="dashboard-card-title"><i class="fa-solid fa-chart-line"></i> Conversational Usage Metrics</h3>
+            </div>
+            
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Total Prompts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in user_usage %}
+                            <tr>
+                                <td>
+                                    <div style="font-weight:700;">{{ row.name }}</div>
+                                    <div style="font-size:0.75rem; color:var(--text-muted);">{{ row.email }}</div>
+                                </td>
+                                <td style="font-weight:800; font-size:1.1rem; color:var(--primary);">
+                                    {{ row.chat_count }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 3. Feedback Submissions -->
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <h3 class="dashboard-card-title"><i class="fa-regular fa-comment-dots"></i> Feedback Reviews</h3>
+            </div>
+            
+            {% if feedback_logs %}
+                <ul class="list-group" style="max-height: 400px; overflow-y: auto;">
+                    {% for f in feedback_logs %}
+                        <li class="list-item" style="flex-direction:column; align-items:flex-start; gap:8px;">
+                            <div style="display:flex; justify-content:space-between; width:100%;">
+                                <strong style="font-size:0.9rem;">{{ f.user_name }}</strong>
+                                <span class="rating-stars">
+                                    {% for idx in range(f.rating) %}
+                                        <i class="fa-solid fa-star"></i>
+                                    {% endfor %}
+                                    {% for idx in range(5 - f.rating) %}
+                                        <i class="fa-regular fa-star" style="color:var(--text-muted);"></i>
+                                    {% endfor %}
+                                </span>
+                            </div>
+                            
+                            <p style="font-size:0.85rem; color:var(--text-secondary); width:100%; border-left:2px solid var(--primary-hover); padding-left:10px;">
+                                "{{ f.feedback }}"
+                            </p>
+                            
+                            <span class="list-item-meta" style="font-size:0.75rem;">Submitted on {{ f.created_at }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="empty-state">
+                    <p>No feedback entries found.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

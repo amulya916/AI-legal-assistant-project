@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Notice Generator - AdvoSphere Legal Assistant{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <div class="container">
+        <h1 class="page-title">Legal Notice Builder</h1>
+        <p style="color:var(--text-secondary);max-width:550px;margin:0 auto;">
+            Configure parameters to draft a formal legal demand letter. Review, edit on-screen, copy text, or compile into a PDF.
+        </p>
+    </div>
+</header>
+
+<section class="page-content-wrapper">
+    <div class="container">
+        <div class="notice-split mb-4">
+            
+            <!-- Left Pane: Input Parameters -->
+            <div>
+                <!-- Notice Selector -->
+                <div class="notice-type-selector">
+                    <label class="form-label" for="noticeTypeSelect">Select Notice Type</label>
+                    <select id="noticeTypeSelect" name="notice_type" class="form-control">
+                        <option value="consumer_complaint" {% if notice_type == 'consumer_complaint' %}selected{% endif %}>Consumer Complaint Notice</option>
+                        <option value="salary_recovery" {% if notice_type == 'salary_recovery' %}selected{% endif %}>Salary Recovery Notice</option>
+                        <option value="rti_application" {% if notice_type == 'rti_application' %}selected{% endif %}>RTI Application Draft</option>
+                        <option value="cybercrime_complaint" {% if notice_type == 'cybercrime_complaint' %}selected{% endif %}>Cybercrime Complaint Draft</option>
+                        <option value="property_dispute" {% if notice_type == 'property_dispute' %}selected{% endif %}>Property Dispute Notice</option>
+                    </select>
+                </div>
+                
+                <!-- Variable Inputs Form (Populated dynamically in JS) -->
+                <form action="{{ url_for('features.notice_generator') }}" method="POST" class="notice-variable-form" id="noticeForm">
+                    <input type="hidden" name="notice_type" id="hiddenNoticeType" value="consumer_complaint">
+                    <div class="dynamic-form-fields" id="dynamicFormFields">
+                        <!-- Filled by notice.js -->
+                    </div>
+                </form>
+            </div>
+
+            <!-- Right Pane: Live Editable Draft Preview -->
+            <div>
+                <div class="notice-preview-container dashboard-card" style="height: 100%;">
+                    <div class="dashboard-card-header" style="margin-bottom:12px;">
+                        <h3 class="dashboard-card-title"><i class="fa-solid fa-file-invoice"></i> Document Preview</h3>
+                        <div style="display:flex; gap:6px;">
+                            {% if generated_text %}
+                                <button class="btn btn-outline btn-sm" id="saveNoticeBtn"><i class="fa-solid fa-floppy-disk"></i> Save Edits</button>
+                                <button class="btn btn-outline btn-sm" id="copyNoticeBtn"><i class="fa-solid fa-copy"></i> Copy</button>
+                                <a href="{{ url_for('features.download_notice', notice_id=notice_id) }}" class="btn btn-primary btn-sm" id="downloadNoticeBtn">
+                                    <i class="fa-solid fa-file-pdf"></i> Download PDF
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if generated_text %}
+                        <input type="hidden" id="noticeIdInput" value="{{ notice_id }}">
+                        <textarea class="preview-editor" id="previewEditor">{{ generated_text }}</textarea>
+                    {% else %}
+                        <div class="empty-state" style="margin: auto; max-width: 350px;">
+                            <i class="fa-solid fa-file-pen" style="font-size:3.5rem; color:var(--text-muted); margin-bottom:15px;"></i>
+                            <h3>Awaiting Notice Parameters</h3>
+                            <p style="color:var(--text-secondary); margin-top:10px;">
+                                Configure variables in the left panel and click 'Generate Notice Draft'. The document editor will load the draft here for you to refine.
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- History Section (Below panels) -->
+        <div class="dashboard-card mt-4">
+            <div class="dashboard-card-header">
+                <h3 class="dashboard-card-title"><i class="fa-solid fa-clock-rotate-left"></i> Your Generated Notice History</h3>
+            </div>
+            
+            {% if notices_history %}
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Notice Type</th>
+                                <th>Date Drafted</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for n in notices_history %}
+                                <tr>
+                                    <td style="font-weight:700;">{{ n.notice_type.replace('_', ' ').upper() }}</td>
+                                    <td>{{ n.created_at }}</td>
+                                    <td style="display:flex; gap:10px;">
+                                        <!-- Load draft back into editor -->
+                                        <form action="{{ url_for('features.notice_generator') }}" method="POST" style="display:inline;">
+                                            <input type="hidden" name="notice_type" value="{{ n.notice_type }}">
+                                            <!-- Simple way to reload is passing notice ID to load, but since we save in history, we can also link to download PDF -->
+                                        </form>
+                                        <a href="{{ url_for('features.download_notice', notice_id=n.id) }}" class="btn btn-outline btn-sm">
+                                            <i class="fa-solid fa-file-pdf" style="color:var(--danger);"></i> Download PDF
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <p>No notices drafted yet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/notice.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Link type select to form hidden notice_type value
+        const noticeTypeSelect = document.getElementById('noticeTypeSelect');
+        const hiddenNoticeType = document.getElementById('hiddenNoticeType');
+        if (noticeTypeSelect && hiddenNoticeType) {
+            hiddenNoticeType.value = noticeTypeSelect.value;
+            noticeTypeSelect.addEventListener('change', () => {
+                hiddenNoticeType.value = noticeTypeSelect.value;
+            });
+        }
+    });
+</script>
+{% endblock %}

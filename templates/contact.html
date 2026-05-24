@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - AdvoSphere Legal Assistant{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <div class="container">
+        <h1 class="page-title">Get in Touch</h1>
+        <p style="color:var(--text-secondary);max-width:550px;margin:0 auto;">
+            Have questions, feedback, or need assistance? Send us a message and we'll get back to you.
+        </p>
+    </div>
+</header>
+
+<section class="page-content-wrapper">
+    <div class="container contact-grid">
+        <!-- Contact Info Card -->
+        <div class="contact-info-card">
+            <div class="contact-method">
+                <i class="fa-solid fa-envelope"></i>
+                <div>
+                    <h4>Email Support</h4>
+                    <p>support@advosphere.com</p>
+                    <p>response within 24 hours</p>
+                </div>
+            </div>
+            
+            <div class="contact-method">
+                <i class="fa-solid fa-map-pin"></i>
+                <div>
+                    <h4>Office Address</h4>
+                    <p>12/A Tech Park Tower,</p>
+                    <p>Cyber City, India</p>
+                </div>
+            </div>
+            
+            <div class="contact-method">
+                <i class="fa-solid fa-circle-info"></i>
+                <div>
+                    <h4>Project Note</h4>
+                    <p>This is a portfolio project designed for AI and DevOps showcases.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contact Form Card -->
+        <div class="form-card">
+            <h3 class="mb-3" style="font-weight:700;">Send Message</h3>
+            
+            <form action="{{ url_for('main.contact') }}" method="POST">
+                <div class="form-group">
+                    <label class="form-label" for="name">Your Name</label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="John Doe" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="john@example.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="message">Message</label>
+                    <textarea id="message" name="message" class="form-control" placeholder="How can we help you today?" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width:100%;">
+                    <i class="fa-solid fa-paper-plane"></i> Send Message
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

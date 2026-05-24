@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Profile Settings - AdvoSphere Legal Assistant{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="dashboard-grid">
+        <!-- Sidebar Navigation Shortcuts -->
+        <aside class="contact-info-card" style="gap:15px; padding:20px; height:fit-content;">
+            <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:10px; color:var(--text-muted);">Quick Panel</h3>
+            <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline" style="justify-content:flex-start; width:100%;">
+                <i class="fa-solid fa-gauge"></i> Overview
+            </a>
+            <a href="{{ url_for('chat.index') }}" class="btn btn-outline" style="justify-content:flex-start; width:100%;">
+                <i class="fa-solid fa-comments"></i> AI Legal Chat
+            </a>
+            <a href="{{ url_for('features.rights_finder') }}" class="btn btn-outline" style="justify-content:flex-start; width:100%;">
+                <i class="fa-solid fa-magnifying-glass-law"></i> Rights Finder
+            </a>
+            <a href="{{ url_for('features.notice_generator') }}" class="btn btn-outline" style="justify-content:flex-start; width:100%;">
+                <i class="fa-solid fa-file-signature"></i> Notice Builder
+            </a>
+            <a href="{{ url_for('features.document_analyzer') }}" class="btn btn-outline" style="justify-content:flex-start; width:100%;">
+                <i class="fa-solid fa-file-shield"></i> Doc Auditor
+            </a>
+            <a href="{{ url_for('features.rti_assistant') }}" class="btn btn-outline" style="justify-content:flex-start; width:100%;">
+                <i class="fa-solid fa-circle-info"></i> RTI Assistant
+            </a>
+            <a href="{{ url_for('dashboard.profile') }}" class="btn btn-outline" style="justify-content:flex-start; width:100%; border-color:var(--primary); background-color:var(--primary-light); color:var(--primary);">
+                <i class="fa-solid fa-gears"></i> Profile Settings
+            </a>
+        </aside>
+
+        <!-- Main Settings Console -->
+        <section>
+            <div class="mb-4">
+                <h1 style="font-family:'Outfit'; font-weight:800; font-size:2.2rem; line-height:1.2;">Account Settings</h1>
+                <p style="color:var(--text-secondary);">Manage your profile information and update login security credentials.</p>
+            </div>
+
+            <div class="profile-grid">
+                <!-- Column 1: Update Profile Details -->
+                <div class="form-card">
+                    <h3 class="mb-3" style="font-weight:700; font-size:1.2rem;"><i class="fa-regular fa-id-card"></i> Personal Information</h3>
+                    
+                    <form action="{{ url_for('dashboard.profile') }}" method="POST">
+                        <div class="form-group">
+                            <label class="form-label" for="name">Full Name</label>
+                            <input type="text" id="name" name="name" class="form-control" placeholder="John Doe" value="{{ user.name }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email Address</label>
+                            <input type="email" id="email" name="email" class="form-control" placeholder="john@example.com" value="{{ user.email }}" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary mt-2" style="width:100%;">
+                            <i class="fa-solid fa-user-check"></i> Save Details
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Column 2: Update Credentials -->
+                <div class="form-card">
+                    <h3 class="mb-3" style="font-weight:700; font-size:1.2rem;"><i class="fa-solid fa-shield-halved"></i> Change Password</h3>
+                    
+                    <form action="{{ url_for('auth.change_password') }}" method="POST">
+                        <div class="form-group">
+                            <label class="form-label" for="current_password">Current Password</label>
+                            <input type="password" id="current_password" name="current_password" class="form-control" placeholder="••••••••" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="fa-label form-label" for="new_password">New Password</label>
+                            <input type="password" id="new_password" name="new_password" class="form-control" placeholder="Min 6 chars (letters/numbers)" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="confirm_password">Confirm New Password</label>
+                            <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="••••••••" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-outline mt-2" style="width:100%;">
+                            <i class="fa-solid fa-key"></i> Update Credentials
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

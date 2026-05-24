@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}About - AdvoSphere Legal Assistant{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <div class="container">
+        <h1 class="page-title">About AdvoSphere</h1>
+        <p style="color:var(--text-secondary);max-width:550px;margin:0 auto;">
+            Democratizing legal knowledge and helping citizens protect their rights through advanced Artificial Intelligence.
+        </p>
+    </div>
+</header>
+
+<section class="page-content-wrapper">
+    <div class="container about-grid">
+        <div class="about-image-card">
+            <i class="fa-solid fa-scale-balanced"></i>
+            <h3>AdvoSphere AI Engine</h3>
+            <p style="color:var(--text-muted);font-size:0.9rem;">
+                Built on Google Gemini LLM framework with customized context guidelines to match citizen legal help desks.
+            </p>
+        </div>
+        
+        <div class="about-details">
+            <h3>Our Mission</h3>
+            <p>
+                Navigating legal systems can be expensive, overwhelming, and confusing. Millions of people lack basic legal counseling when dealing with issues like unpaid salaries, defective consumer products, and landlord-tenant conflicts.
+            </p>
+            <p>
+                <strong>AdvoSphere</strong> was created to bridge this legal divide. By using LLMs, we translate complex legal jargon into plain, actionable language. We help users identify their exact statutory rights, structure demand letters, draft notices, and parse dense contracts.
+            </p>
+            <p>
+                All data resides securely within local sessions and databases, ensuring user privacy and confidentiality.
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

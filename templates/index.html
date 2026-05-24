@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Home - AdvoSphere Legal Assistant{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container hero-grid">
+        <div class="hero-content">
+            <span class="visual-badge"><i class="fa-solid fa-sparkles"></i> AI-Powered Legal Literacy</span>
+            <h1 class="hero-title">Your Intelligent <span>Legal Assistant</span></h1>
+            <p class="hero-subtitle">
+                Navigate the complexities of laws, draft official notices, audit agreements, and request public records with our secure generative AI system. Simplified legal literacy at your fingertips.
+            </p>
+            <div class="hero-actions">
+                {% if session.get('user_id') %}
+                    <a href="{{ url_for('chat.index') }}" class="btn btn-primary"><i class="fa-solid fa-comments"></i> Start Legal Chat</a>
+                    <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline">Go to Dashboard</a>
+                {% else %}
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Create Free Account</a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline">Sign In</a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="hero-visual">
+            <div class="hero-visual-card">
+                <span class="visual-badge">Platform Overview</span>
+                <h3 class="visual-text">Empowering Legal Literacy</h3>
+                <div class="visual-features">
+                    <div class="visual-feature-item">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Understand Consumer & Labor Rights</span>
+                    </div>
+                    <div class="visual-feature-item">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Draft Formal Legal Notice Documents</span>
+                    </div>
+                    <div class="visual-feature-item">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Audit PDF & DOCX Contracts instantly</span>
+                    </div>
+                    <div class="visual-feature-item">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Learn public RTI appeal procedures</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Grid Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Core Services</h2>
+            <p class="section-desc">
+                Choose from our range of legal assistant modules tailored to solve everyday legal challenges.
+            </p>
+        </div>
+        
+        <div class="features-grid">
+            <!-- Feature 1: AI Chatbot -->
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-comments-dollar"></i>
+                </div>
+                <h3>AI Chatbot</h3>
+                <p>
+                    Have a conversation about civil laws, schemes, and consumer issues. Get answers complete with references and structural guidelines.
+                </p>
+                <a href="{{ url_for('chat.index') }}" class="feature-link">Open Chatbot <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            
+            <!-- Feature 2: Rights Finder -->
+            <div class="feature-card accent-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-scale-unbalanced-flip"></i>
+                </div>
+                <h3>Rights Finder</h3>
+                <p>
+                    Submit details of any legal conflict or grievance. Our model will analyze the scenario, map your rights, and suggest step-by-step next actions.
+                </p>
+                <a href="{{ url_for('features.rights_finder') }}" class="feature-link">Analyze Grievance <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            
+            <!-- Feature 3: Document Analyzer -->
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-file-invoice"></i>
+                </div>
+                <h3>Document Auditor</h3>
+                <p>
+                    Upload agreements or contracts (PDF/DOCX) to get a clear summary, simplified clauses, obligations, and flag any hidden liabilities.
+                </p>
+                <a href="{{ url_for('features.document_analyzer') }}" class="feature-link">Upload File <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            
+            <!-- Feature 4: Notice Generator -->
+            <div class="feature-card accent-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-file-pen"></i>
+                </div>
+                <h3>Notice Builder</h3>
+                <p>
+                    Generate Consumer Complaints, Salary Recovery, Cybercrime Reports, and Property Notices. Edit draft templates online and download print-ready PDFs.
+                </p>
+                <a href="{{ url_for('features.notice_generator') }}" class="feature-link">Draft Notice <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            
+            <!-- Feature 5: RTI Assistant -->
+            <div class="feature-card">
+                <div class="feature-icon-wrapper">
+                    <i class="fa-solid fa-circle-question"></i>
+                </div>
+                <h3>RTI Assistant</h3>
+                <p>
+                    Step-by-step tutorial on filing Right to Information queries, templates for applications, and guides for First and Second appeals.
+                </p>
+                <a href="{{ url_for('features.rti_assistant') }}" class="feature-link">Learn RTI <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

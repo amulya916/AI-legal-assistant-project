@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}AI Chatbot - AdvoSphere Legal Assistant{% endblock %}
+
+{% block head %}
+<!-- Custom styles overrides for chatbot layout to handle full height grid -->
+<style>
+    html, body {
+        height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+    }
+    .main-header {
+        height: 70px !important;
+        flex-shrink: 0 !important;
+    }
+    .main-content {
+        padding: 0 !important;
+        margin: 0 !important;
+        flex-grow: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: 0 !important;
+        height: calc(100vh - 70px) !important;
+        overflow: hidden !important;
+    }
+    .main-footer {
+        display: none !important; /* Hide footer on chat screen for application feel */
+    }
+    .chatbot-container {
+        height: 100% !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+    }
+    .chat-sidebar {
+        height: 100% !important;
+        min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+    }
+    .chat-main {
+        height: 100% !important;
+        min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+    }
+    .chat-messages-container {
+        flex-grow: 1 !important;
+        overflow-y: auto !important;
+        min-height: 0 !important;
+    }
+    .sidebar-history-container {
+        flex-grow: 1 !important;
+        overflow-y: auto !important;
+        min-height: 0 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="chatbot-container">
+    <!-- Sidebar Panel: Search & History Logs -->
+    <aside class="chat-sidebar">
+        <!-- New chat action -->
+        <div class="sidebar-header">
+            <a href="{{ url_for('chat.clear_conversation') }}" class="btn btn-primary btn-sm" style="width:100%;">
+                <i class="fa-solid fa-plus"></i> New Conversation
+            </a>
+        </div>
+        
+        <!-- Search bar -->
+        <div class="sidebar-search">
+            <div class="search-input-wrapper">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchChatsInput" placeholder="Search conversations...">
+            </div>
+        </div>
+        
+        <!-- History List scroll zone -->
+        <div class="sidebar-history-container">
+            <h4 style="font-size:0.8rem; font-weight:700; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase;">Recent Chats</h4>
+            <ul class="history-list" id="historyList">
+                {% if chats %}
+                    {% for c in chats|reverse %}
+                        <li class="history-item" data-id="{{ c.id }}">
+                            <span class="history-item-text" title="{{ c.message }}">{{ c.message }}</span>
+                            <span class="history-item-actions">
+                                <i class="fa-regular fa-trash-can delete-btn" data-id="{{ c.id }}"></i>
+                            </span>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="text-center" style="font-size:0.8rem; color:var(--text-muted); padding-top:15px;">No conversations</li>
+                {% endif %}
+            </ul>
+        </div>
+        
+        <!-- Feedback Widget in Sidebar Footer -->
+        <div class="sidebar-footer" style="background-color:rgba(0,0,0,0.05); border-top:1px solid var(--border-color);">
+            <h4 style="font-size:0.85rem; font-weight:700; margin-bottom:10px;"><i class="fa-regular fa-star-half-stroke" style="color:var(--warning);"></i> Rate Assistant</h4>
+            
+            <form action="{{ url_for('chat.submit_feedback') }}" method="POST" style="display:flex; flex-direction:column; gap:8px;">
+                <div style="display:flex; gap:6px; font-size:1.1rem; color:var(--text-muted); justify-content:center; margin-bottom:4px;">
+                    <label style="cursor:pointer;"><input type="radio" name="rating" value="1" required style="display:none;"><i class="fa-solid fa-star star-radio" data-val="1"></i></label>
+                    <label style="cursor:pointer;"><input type="radio" name="rating" value="2" style="display:none;"><i class="fa-solid fa-star star-radio" data-val="2"></i></label>
+                    <label style="cursor:pointer;"><input type="radio" name="rating" value="3" style="display:none;"><i class="fa-solid fa-star star-radio" data-val="3"></i></label>
+                    <label style="cursor:pointer;"><input type="radio" name="rating" value="4" style="display:none;"><i class="fa-solid fa-star star-radio" data-val="4"></i></label>
+                    <label style="cursor:pointer;"><input type="radio" name="rating" value="5" style="display:none;"><i class="fa-solid fa-star star-radio" data-val="5"></i></label>
+                </div>
+                
+                <input type="text" name="feedback" class="form-control" placeholder="Comments..." style="padding:6px 10px; font-size:0.8rem; border-radius:6px;" required>
+                <button type="submit" class="btn btn-outline btn-sm" style="font-size:0.75rem; padding:4px 8px; width:100%;">
+                    Submit Feedback
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Main Chat Console Area -->
+    <section class="chat-main">
+        <!-- Chat Console Header -->
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <div class="bot-avatar"><i class="fa-solid fa-robot"></i></div>
+                <div>
+                    <span class="bot-name">AdvoBot AI</span>
+                    <span class="bot-status"><span class="status-dot"></span> Online</span>
+                </div>
+            </div>
+            
+            <div>
+                <a href="{{ url_for('chat.export_chats') }}" class="btn btn-outline btn-sm">
+                    <i class="fa-solid fa-file-arrow-down"></i> Export Chats (PDF)
+                </a>
+            </div>
+        </div>
+        
+        <!-- Messages Display Zone -->
+        <div class="chat-messages-container" id="messagesContainer">
+            {% if chats %}
+                {% for chat in chats %}
+                    <!-- User bubble -->
+                    <div class="message-row user-row">
+                        <div class="message-bubble">
+                            {{ chat.message }}
+                            <div class="message-meta">
+                                <span>{{ chat.timestamp }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bot bubble -->
+                    <div class="message-row bot-row" data-id="{{ chat.id }}">
+                        <div class="message-bubble">
+                            <!-- Basic serverside markdown rendering fallback, JavaScript does it dynamically for new messages -->
+                            <div class="chat-markdown-text">
+                                {{ chat.response }}
+                            </div>
+                            <div class="message-meta">
+                                <span>{{ chat.timestamp }}</span>
+                                <span class="message-actions">
+                                    <i class="{% if chat.saved %}fa-solid{% else %}fa-regular{% endif %} fa-bookmark save-btn" title="Bookmark response" data-id="{{ chat.id }}"></i>
+                                    <i class="fa-regular fa-trash-can delete-btn" title="Delete chat block" data-id="{{ chat.id }}" style="margin-left:10px;"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <!-- Welcome prompt if empty -->
+                <div class="empty-state" style="margin: auto; max-width: 450px;">
+                    <i class="fa-solid fa-scale-balanced" style="font-size:4rem; color:var(--primary); margin-bottom:20px;"></i>
+                    <h2 style="font-family:'Outfit'; font-weight:700; margin-bottom:10px;">Welcome to AdvoBot</h2>
+                    <p style="color:var(--text-secondary); font-size:0.95rem;">
+                        I am your AI legal assistant. You can ask me questions about Consumer rights, Labor disputes, cybercrime laws, and filing RTI records.
+                    </p>
+                    <div class="mt-4" style="text-align: left; display:flex; flex-direction:column; gap:8px;">
+                        <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted);">SUGGESTED TOPICS:</span>
+                        <button onclick="document.getElementById('chatInput').value = 'What are my rights if my landlord refuses to return my security deposit?'; document.getElementById('chatForm').dispatchEvent(new Event('submit'));" class="btn btn-outline btn-sm" style="justify-content:flex-start;">Refused Security Deposit Rights</button>
+                        <button onclick="document.getElementById('chatInput').value = 'My salary is unpaid for two months. What actions should I take?'; document.getElementById('chatForm').dispatchEvent(new Event('submit'));" class="btn btn-outline btn-sm" style="justify-content:flex-start;">Salary Unpaid Labor Laws</button>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Input control bar -->
+        <div class="chat-input-bar">
+            <form class="chat-input-form" id="chatForm">
+                <div class="chat-input-wrapper">
+                    <textarea class="chat-input" id="chatInput" placeholder="Ask a legal question... (Press Enter to send)" required></textarea>
+                </div>
+                <button type="submit" class="chat-send-btn" id="sendBtn" aria-label="Send Message">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+<!-- Inline scripts to handle rating feedback stars selector state -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Reset scroll positions of window and body to prevent browser scroll on focus
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+
+        const stars = document.querySelectorAll('.star-radio');
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const val = parseInt(star.getAttribute('data-val'));
+                // Checked input radio
+                const input = star.parentNode.querySelector('input');
+                if (input) input.checked = true;
+                
+                // Color highlight
+                stars.forEach(s => {
+                    const sVal = parseInt(s.getAttribute('data-val'));
+                    if (sVal <= val) {
+                        s.style.color = 'var(--warning)';
+                    } else {
+                        s.style.color = 'var(--text-muted)';
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

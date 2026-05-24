@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block title %}RTI Assistant - AdvoSphere Legal Assistant{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <div class="container">
+        <h1 class="page-title">RTI Application Assistant</h1>
+        <p style="color:var(--text-secondary);max-width:550px;margin:0 auto;">
+            Learn how to file a Right to Information (RTI) application, access templates, and understand appeal procedures.
+        </p>
+    </div>
+</header>
+
+<section class="page-content-wrapper">
+    <div class="container rti-layout">
+        <!-- Left Sidebar Options -->
+        <aside class="rti-sidebar">
+            <ul class="rti-menu-list">
+                <li><span class="rti-menu-link active" data-target="guide-tab">RTI Filing Guide</span></li>
+                <li><span class="rti-menu-link" data-target="templates-tab">RTI Templates</span></li>
+                <li><span class="rti-menu-link" data-target="process-tab">Process Explanation</span></li>
+                <li><span class="rti-menu-link" data-target="first-appeal-tab">First Appeal Guide</span></li>
+                <li><span class="rti-menu-link" data-target="second-appeal-tab">Second Appeal Guide</span></li>
+                <li><span class="rti-menu-link" data-target="faq-tab">FAQs</span></li>
+            </ul>
+        </aside>
+
+        <!-- Right Content Panels -->
+        <div class="rti-content-panel">
+            
+            <!-- 1. RTI Filing Guide -->
+            <div class="rti-section active" id="guide-tab">
+                <h2 style="font-weight:700; margin-bottom:15px;"><i class="fa-solid fa-book-open" style="color:var(--primary);"></i> RTI Filing Guide</h2>
+                <p class="mb-3">
+                    Filing a Right to Information (RTI) application allows you to seek information from any government department, public sector bank, municipal office, or public school/university.
+                </p>
+                <h3 class="mt-3 mb-2" style="font-size:1.15rem; font-weight:700;">Steps to file an RTI:</h3>
+                <ol style="margin-left:22px; display:flex; flex-direction:column; gap:8px;">
+                    <li><strong>Identify the Department:</strong> Determine which public authority has the information (e.g. Municipal Corporation, Ministry, Police, etc.).</li>
+                    <li><strong>Draft the Questions:</strong> Write clear, specific questions. Do not ask for opinions; ask for specific data, documents, log sheets, or reports.</li>
+                    <li><strong>Pay Fee:</strong> The nominal fee is typically around $0.15 (Rs. 10 in India), paid via postal order, demand draft, or net banking.</li>
+                    <li><strong>Submit:</strong> Send your application to the **Public Information Officer (PIO)** of that department via registered post, or submit online if the state portal is available.</li>
+                    <li><strong>Wait for response:</strong> The PIO must legally reply within **30 days** of receipt.</li>
+                </ol>
+            </div>
+
+            <!-- 2. RTI Templates -->
+            <div class="rti-section" id="templates-tab">
+                <h2 style="font-weight:700; margin-bottom:15px;"><i class="fa-solid fa-file-invoice" style="color:var(--primary);"></i> RTI Application Templates</h2>
+                <p class="mb-3">Copy these templates to draft your application. Fill in the placeholders before submitting.</p>
+                
+                <div class="template-card">
+                    <h3 style="font-size:1.05rem; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
+                        <span>Standard RTI Application Template</span>
+                        <button class="btn btn-outline btn-sm copy-tpl-btn" data-target="tpl-standard">Copy Template</button>
+                    </h3>
+                    <pre class="template-content" id="tpl-standard">
+To,
+The Public Information Officer (PIO),
+[Name of public authority/office]
+[Full address of office]
+
+Subject: Request for Information under Right to Information Act.
+
+1. Full Name of the Applicant: [Your Full Name]
+2. Address: [Your Full Address]
+3. Details of Information Required:
+   Please provide the following records/documents:
+   a. [List query 1 in detail, e.g. Certified copy of work order for road construction in Sector 4]
+   b. [List query 2, e.g. Date of completion and name of the contractor]
+   c. [List query 3, e.g. Total budget allocated and amount billed]
+4. I state that the information requested does not fall under the exemptions of the RTI act and is in public interest.
+5. Fee Details: A fee of [Rs. 10 / fee amount] has been paid via [Postal Order No. / Online Trans. Ref] dated [Date].
+
+Place: [Your City]
+Date: [Filing Date]
+
+__________________
+[Your Signature]
+                    </pre>
+                </div>
+            </div>
+
+            <!-- 3. Process Explanation -->
+            <div class="rti-section" id="process-tab">
+                <h2 style="font-weight:700; margin-bottom:15px;"><i class="fa-solid fa-network-wired" style="color:var(--primary);"></i> Process Explanation</h2>
+                <p>
+                    Understanding the path of an RTI request helps manage expectations and deadlines. The process flows through multiple stages:
+                </p>
+                
+                <div style="background-color:var(--bg-primary); padding:20px; border-radius:8px; border:1px solid var(--border-color); margin-top:20px; display:flex; flex-direction:column; gap:12px;">
+                    <div>
+                        <strong>1. Submission Day 0:</strong> Applicant submits application and fee details.
+                    </div>
+                    <div>
+                        <strong>2. Evaluation Days 1-5:</strong> PIO receives and logs application. If it belongs to another department, PIO must transfer it within 5 days.
+                    </div>
+                    <div>
+                        <strong>3. Compilation Days 6-25:</strong> PIO retrieves the information from internal sections.
+                    </div>
+                    <div>
+                        <strong>4. Response Days 26-30:</strong> PIO writes and sends the response. If denied, must mention reasons and appeal procedures.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. First Appeal Guide -->
+            <div class="rti-section" id="first-appeal-tab">
+                <h2 style="font-weight:700; margin-bottom:15px;"><i class="fa-solid fa-scale-balanced" style="color:var(--primary);"></i> First Appeal Guide</h2>
+                <p class="mb-3">
+                    If you do **not** receive a response within 30 days, or if you are dissatisfied with the information provided by the PIO, you can file a **First Appeal**.
+                </p>
+                <div class="template-card">
+                    <h3 style="font-size:1.05rem; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
+                        <span>First Appeal Template</span>
+                        <button class="btn btn-outline btn-sm copy-tpl-btn" data-target="tpl-first-appeal">Copy Template</button>
+                    </h3>
+                    <pre class="template-content" id="tpl-first-appeal">
+To,
+The First Appellate Authority (FAA),
+[Name of public department]
+[Full address of office]
+
+Subject: First Appeal under the Right to Information Act.
+
+1. Name of the Appellant: [Your Name]
+2. Address: [Your Address]
+3. Details of RTI Application:
+   Filed on [Date] to PIO of [Department Name] regarding [Topic].
+4. Details of PIO Response (if any):
+   [Specify: No response received / OR / Dissatisfied with response ref. no. X dated Y]
+5. Grounds for Appeal:
+   [Specify: The PIO failed to provide response within 30 days / OR / The PIO provided incomplete or misleading information...]
+6. Relief Demanded:
+   Kindly direct the PIO to release the requested information free of cost immediately.
+
+Place: [Your City]
+Date: [Filing Date]
+
+__________________
+[Signature of Appellant]
+                    </pre>
+                </div>
+            </div>
+
+            <!-- 5. Second Appeal Guide -->
+            <div class="rti-section" id="second-appeal-tab">
+                <h2 style="font-weight:700; margin-bottom:15px;"><i class="fa-solid fa-gavel" style="color:var(--primary);"></i> Second Appeal Guide</h2>
+                <p class="mb-3">
+                    If the First Appellate Authority (FAA) does not pass an order within 30-45 days, or if you are still dissatisfied with their decision, you can file a **Second Appeal** directly with the **Information Commission** (State or Central) within **90 days**.
+                </p>
+                <div class="template-card">
+                    <h3 style="font-size:1.05rem; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
+                        <span>Second Appeal Template</span>
+                        <button class="btn btn-outline btn-sm copy-tpl-btn" data-target="tpl-sec-appeal">Copy Template</button>
+                    </h3>
+                    <pre class="template-content" id="tpl-sec-appeal">
+To,
+The State/Central Information Commission,
+[Commission Address]
+
+Subject: Second Appeal under Section 19(3) of the RTI Act.
+
+1. Name & Address of Appellant: [Your details]
+2. Name & Address of PIO: [PIO details]
+3. Name & Address of First Appellate Authority: [FAA details]
+4. Date of Filing RTI: [Date]
+5. Date of Filing First Appeal: [Date]
+6. Decision of FAA (if any): [Attach order or state 'No response']
+7. Brief facts of case: [Summarize your queries and why information is being blocked]
+8. Prayer / Relief sought:
+   a. Direct the PIO to disclose the information.
+   b. Impose penalty on the PIO under Section 20 of the RTI Act for deliberate refusal.
+
+Place: [Your City]
+Date: [Date]
+
+__________________
+[Signature of Appellant]
+                    </pre>
+                </div>
+            </div>
+
+            <!-- 6. FAQs -->
+            <div class="rti-section" id="faq-tab">
+                <h2 style="font-weight:700; margin-bottom:15px;"><i class="fa-solid fa-circle-question" style="color:var(--primary);"></i> Frequently Asked Questions</h2>
+                
+                <div class="faq-group">
+                    <div class="faq-item">
+                        <div class="faq-question">What is the cost of filing an RTI? <i class="fa-solid fa-chevron-down"></i></div>
+                        <div class="faq-answer">
+                            The standard filing fee is Rs. 10 (or about $0.15). If photocopy pages are requested, the PIO may ask for Rs. 2 per page extra. People below the poverty line (BPL) are exempted from any fees.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">Can I ask for opinions or 'why' something happened? <i class="fa-solid fa-chevron-down"></i></div>
+                        <div class="faq-answer">
+                            No. You can only ask for documents, records, circulars, files, logs, or emails that already exist in government files. You cannot ask the PIO to explain reasons, make deductions, or offer opinions.
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question">What happens if my RTI is ignored? <i class="fa-solid fa-chevron-down"></i></div>
+                        <div class="faq-answer">
+                            If the PIO does not respond in 30 days, it is deemed as refusal. You should file a First Appeal immediately to the Appellate Authority.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Handle Sidebar Tab Switches
+        const links = document.querySelectorAll('.rti-menu-link');
+        const sections = document.querySelectorAll('.rti-section');
+        
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                const target = link.getAttribute('data-target');
+                
+                // Toggle active menu highlight
+                links.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                // Toggle active section panel
+                sections.forEach(sec => {
+                    if (sec.id === target) {
+                        sec.classList.add('active');
+                    } else {
+                        sec.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // FAQ Accordeon collapse toggle
+        const faqs = document.querySelectorAll('.faq-item');
+        faqs.forEach(faq => {
+            const q = faq.querySelector('.faq-question');
+            q.addEventListener('click', () => {
+                faq.classList.toggle('active');
+            });
+        });
+
+        // Template copying utility
+        const copyBtns = document.querySelectorAll('.copy-tpl-btn');
+        copyBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-target');
+                const content = document.getElementById(targetId).textContent;
+                
+                navigator.clipboard.writeText(content.trim()).then(() => {
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Copied!';
+                    btn.style.borderColor = 'var(--success)';
+                    btn.style.color = 'var(--success)';
+                    
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.borderColor = '';
+                        btn.style.color = '';
+                    }, 2000);
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}
