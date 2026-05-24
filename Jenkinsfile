@@ -4,7 +4,7 @@ pipeline {
     environment {
         // Define your Docker Hub Registry or ECR
         DOCKER_REGISTRY = "docker.io"
-        IMAGE_NAME      = "your-dockerhub-username/ailegalproject"
+        IMAGE_NAME      = "amulya916/ailegalproject"
         IMAGE_TAG       = "${BUILD_NUMBER}"
         KUBECONFIG_CREDENTIAL_ID = "kubernetes-config-id"
     }
